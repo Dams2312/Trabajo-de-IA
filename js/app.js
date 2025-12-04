@@ -5,7 +5,7 @@ async function procesamiento() {
     
     const encoding = encoding_for_model('gpt-4');
 
-    const libro = fs.createReadStream('/../Archivos/cien_años_de_soledad.txt', 'utf-8');
+    const libro = fs.readFileSync('./cien_años_de_soledad.txt', 'utf-8');
 
     const tokens = encoding.encode(libro);
 
@@ -18,13 +18,13 @@ async function procesamiento() {
 
     for (let token of tokens) {
         if (actual.length >=  maximo) {
-            chunks.push(encoding.decode(actual));
+            chunks.push(actual);
             actual = [];
         }
         actual.push(token);
     }
-    if (chunkActual.length > 0) {
-        chunks.push(encoding.decode(chunkActual));
+    if (actual.length > 0) {
+        chunks.push(actual);
     }
     console.log(`Número total de fragmentos: ${chunks.length}`);
 
@@ -33,7 +33,7 @@ async function procesamiento() {
 
     chunks.forEach((chunk, index) => {  
 
-        const numTokens = encoding.encode(chunk).length;
+        const numTokens = chunk.length;
         let preciochunk = (numTokens / 1000) * costo;
         let total = precio + preciochunk;
         precio = total;
